@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 수시 지원 입력</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    background: #f5f3ef; color: #2a2620; line-height: 1.5;
+  }
+  .app { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .app-header {
+    background: linear-gradient(135deg, #3a6647 0%, #4a7a5a 100%);
+    color: white; padding: 20px 24px; border-radius: 12px; margin-bottom: 16px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+  .app-header h1 { margin: 0; font-size: 22px; font-weight: 700; }
+  .user-bar { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+  .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card h2 { margin: 0 0 16px 0; font-size: 18px; color: #3a6647; border-bottom: 2px solid #e0d9cc; padding-bottom: 10px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; color: #5a4f3f; }
+  input[type="text"], input[type="password"], select {
+    width: 100%; padding: 12px 14px; border: 1.5px solid #d4cab8; border-radius: 8px;
+    font-size: 15px; background: white; color: #2a2620; transition: border 0.2s;
+  }
+  input:focus, select:focus { outline: none; border-color: #3a6647; box-shadow: 0 0 0 3px rgba(58,102,71,0.1); }
+  select:disabled { background: #f5f3ef; color: #999; cursor: not-allowed; }
+  .btn {
+    padding: 12px 24px; border: none; border-radius: 8px; font-size: 15px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+  .btn-primary { background: #3a6647; color: white; }
+  .btn-primary:hover { background: #2d5238; }
+  .btn-secondary { background: #d4cab8; color: #3a2e1e; }
+  .btn-secondary:hover { background: #c0b6a2; }
+  .btn-link { background: transparent; color: #3a6647; border: none; padding: 4px 8px; font-size: 13px; cursor: pointer; text-decoration: underline; }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-row-bottom {
+    justify-content: flex-end; padding-top: 20px; border-top: 2px solid #e0d9cc;
+    margin-top: 24px; position: sticky; bottom: 0; background: white; padding-bottom: 8px;
+  }
+  .btn-row .btn { flex: 1; }
+  .btn-row-bottom .btn { flex: 0 0 auto; min-width: 140px; }
+  .msg { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 14px; min-height: 20px; }
+  .msg-ok { background: #e8f5e9; color: #2d5238; border: 1px solid #3a6647; }
+  .msg-err { background: #fce4e4; color: #8b2a2a; border: 1px solid #c25e5e; }
+  .help-box {
+    margin-top: 20px; padding: 14px 18px; background: #fff8e8;
+    border-left: 4px solid #d4a428; border-radius: 8px; font-size: 13px; color: #6a5018;
+  }
+  .help-box strong { display: block; margin-bottom: 6px; color: #8b6818; }
+  .help-box ul { margin: 6px 0 0 0; padding-left: 20px; }
+  .notice-box {
+    background: #e8f0ff; border-left: 4px solid #2a5db8; padding: 12px 16px;
+    border-radius: 8px; margin-bottom: 16px; font-size: 14px; color: #1a3a78;
+  }
+  .notice-box:empty { display: none; }
+  .section-title { margin: 24px 0 12px 0; font-size: 15px; color: #5a4f3f; padding-bottom: 8px; border-bottom: 1px solid #e0d9cc; }
+  .slot {
+    border: 2px solid #e0d9cc; border-radius: 10px; padding: 16px;
+    margin-bottom: 12px; background: #faf8f3; transition: all 0.2s;
+  }
+  .slot-filled { border-color: #3a6647; background: white; }
+  .slot-required { border-left-width: 5px; }
+  .slot-optional { border-style: dashed; opacity: 0.95; }
+  .slot-optional.slot-filled { border-style: solid; opacity: 1; }
+  .slot-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .slot-num { font-weight: 700; font-size: 15px; color: #3a2e1e; }
+  .slot-check { color: #3a6647; font-size: 18px; font-weight: bold; }
+  .slot-fields { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: end; }
+  .slot-fields .field { display: flex; flex-direction: column; }
+  .slot-fields label { font-size: 12px; color: #7a6f5f; margin-bottom: 4px; font-weight: 600; }
+  .slot-fields select { padding: 8px 10px; font-size: 13px; }
+  .btn-clear { padding: 8px 12px; font-size: 12px; color: #8b2a2a; border: 1px solid #d4cab8; background: white; border-radius: 6px; cursor: pointer; }
+  .btn-clear:hover { background: #fce4e4; border-color: #c25e5e; }
+  .slot-details { margin-top: 12px; }
+  .slot-details:empty { display: none; }
+  .details-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #d4cab8;
+  }
+  .detail-section { background: #f5f3ef; padding: 10px 12px; border-radius: 6px; font-size: 12px; }
+  .detail-section h4 { margin: 0 0 8px 0; font-size: 12px; color: #5a4f3f; font-weight: 700; }
+  .detail-highlight { background: #fff8e8; border: 1px solid #e0c878; }
+  .detail-highlight h4 { color: #8b6818; }
+  .detail-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dotted #e0d9cc; font-size: 12px; }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .lbl { color: #7a6f5f; margin-right: 8px; }
+  .detail-row .val { color: #2a2620; font-weight: 500; text-align: right; flex: 1; }
+  .suneung-min { padding: 8px 0; line-height: 1.5; font-size: 13px; color: #6a4818; font-weight: 500; }
+  .info-empty { padding: 10px; color: #999; font-size: 12px; text-align: center; }
+  .hint { color: #7a6f5f; font-size: 13px; margin: 0 0 16px 0; padding: 10px 14px; background: #f5f3ef; border-radius: 6px; }
+  .loading-mini { padding: 10px; color: #7a6f5f; font-size: 12px; text-align: center; }
+  .loading {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center; gap: 12px; z-index: 1000;
+    color: white; font-size: 16px;
+  }
+  .spinner { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 600px) {
+    .app { padding: 8px; }
+    .app-header { padding: 16px 18px; }
+    .app-header h1 { font-size: 18px; }
+    .card { padding: 16px; }
+    .slot-fields { grid-template-columns: 1fr; }
+    .btn-row-bottom { flex-direction: column-reverse; }
+    .btn-row-bottom .btn { width: 100%; }
+    .details-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <h1>2026 수시 지원 입력</h1>
+    <div id="userBar" class="user-bar" style="display:none">
+      <span id="userInfo"></span>
+      <button class="btn-link" onclick="logout()">로그아웃</button>
+    </div>
+  </header>
+  
+  <!-- 로그인 -->
+  <section id="loginSection" class="card">
+    <h2>학번으로 시작하기</h2>
+    <div class="form-group">
+      <label>학번 (5자리)</label>
+      <input type="text" id="hakbunInput" maxlength="5" placeholder="예: 30601" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label>비밀번호 (4자 이상)</label>
+      <input type="password" id="passwordInput" placeholder="비밀번호">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="login(false)">로그인</button>
+      <button class="btn btn-secondary" onclick="login(true)">처음 등록</button>
+    </div>
+    <div id="loginMsg" class="msg"></div>
+    <div class="help-box">
+      <strong>안내</strong>
+      <ul>
+        <li>처음 사용 시 [처음 등록] 버튼을 눌러 학번과 비밀번호를 등록하세요.</li>
+        <li>이미 등록했다면 [로그인] 버튼을 누르세요.</li>
+        <li>비밀번호는 본인이 기억할 수 있는 것으로 설정하세요.</li>
+      </ul>
+    </div>
+  </section>
+  
+  <!-- 입력 -->
+  <section id="formSection" class="card" style="display:none">
+    <div id="noticeBox" class="notice-box"></div>
+    <h2>나의 수시 지원 계획</h2>
+    <p class="hint">대학·세부전형·모집단위를 차례로 선택하면 해당 전형의 상세 정보가 표시됩니다. 선택 후 [임시저장] 또는 [최종 제출]을 누르세요.</p>
+    <div id="slotsContainer"></div>
+    <div class="btn-row btn-row-bottom">
+      <button class="btn btn-secondary" onclick="saveData(false)">💾 임시저장</button>
+      <button class="btn btn-primary" onclick="saveData(true)">✅ 최종 제출</button>
+    </div>
+    <div id="saveMsg" class="msg"></div>
+  </section>
+  
+  <div id="loading" class="loading" style="display:none">
+    <div class="spinner"></div>
+    <span id="loadingMsg">처리 중...</span>
+  </div>
+</div>
+
+<script>
+// ============ 설정 ============
+// ⚠️ 선생님이 셋업 시 변경 필요
+const CONFIG = {
+  // 데이터 파일 위치 (HTML 파일과 같은 폴더에 universities.json, data/*.json 있어야 함)
+  DATA_BASE: './',
+  
+  // Apps Script Web App URL (제출 받을 곳)
+  // 셋업 가이드 참고하여 만든 URL 입력
+  SUBMIT_URL: 'https://script.google.com/macros/s/AKfycbwHKITbc4qnyRIUP-ZtPWLD5Zhfv2n0NF1CgJirK6Z5ya-Q8WtAC0hmhitMImLHELmA/exec',
+  
+  // 슬롯 수
+  REQUIRED_SLOTS: 6,
+  OPTIONAL_SLOTS: 4,
+  
+  // 마감일 (YYYY-MM-DD HH:mm 형식, 또는 빈 문자열)
+  DEADLINE: '2026-12-31 23:59',
+  
+  // 공지사항
+  NOTICE: '수시 지원 계획을 6개 이상 필수로 입력하고, 추가로 최대 4개까지 입력 가능합니다.'
+};
+
+const TOTAL_SLOTS = CONFIG.REQUIRED_SLOTS + CONFIG.OPTIONAL_SLOTS;
+
+// ============ 전역 상태 ============
+let currentHakbun = null;
+let universities = [];
+let univFilenames = {};   // 대학명 → 파일명 매핑
+let univDataCache = {};   // 로드된 대학 데이터 캐시 (메모리)
+let slotsData = [];
+
+// ============ 로딩 ============
+function showLoading(msg) {
+  document.getElementById('loadingMsg').textContent = msg || '처리 중...';
+  document.getElementById('loading').style.display = 'flex';
+}
+function hideLoading() {
+  document.getElementById('loading').style.display = 'none';
+}
+
+function showMsg(elementId, msg, isError) {
+  const el = document.getElementById(elementId);
+  el.textContent = msg;
+  el.className = 'msg ' + (isError ? 'msg-err' : 'msg-ok');
+  setTimeout(() => { el.textContent = ''; el.className = 'msg'; }, 5000);
+}
+
+// ============ 비밀번호 해시 (SHA-256) ============
+async function hashPassword(pw) {
+  const enc = new TextEncoder();
+  const data = enc.encode(pw + '_salt2026_susi');
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ============ 로그인/회원가입 (LocalStorage) ============
+async function login(isFirstTime) {
+  const hakbun = document.getElementById('hakbunInput').value.trim();
+  const password = document.getElementById('passwordInput').value;
+  
+  if (!/^\d{5}$/.test(hakbun)) {
+    showMsg('loginMsg', '학번은 5자리 숫자입니다.', true);
+    return;
+  }
+  if (password.length < 4) {
+    showMsg('loginMsg', '비밀번호는 최소 4자리 이상입니다.', true);
+    return;
+  }
+  
+  const pwHash = await hashPassword(password);
+  const storedHash = localStorage.getItem('pw_' + hakbun);
+  
+  if (isFirstTime) {
+    if (storedHash) {
+      showMsg('loginMsg', '이미 등록된 학번입니다. 로그인하세요.', true);
+      return;
+    }
+    localStorage.setItem('pw_' + hakbun, pwHash);
+    currentHakbun = hakbun;
+    showFormScreen();
+  } else {
+    if (!storedHash) {
+      showMsg('loginMsg', '등록된 학번이 없습니다. [처음 등록] 버튼을 클릭하세요.', true);
+      return;
+    }
+    if (storedHash !== pwHash) {
+      showMsg('loginMsg', '❌ 비밀번호가 일치하지 않습니다.', true);
+      return;
+    }
+    currentHakbun = hakbun;
+    showFormScreen();
+  }
+}
+
+function logout() {
+  if (confirm('로그아웃 하시겠습니까?')) {
+    currentHakbun = null;
+    slotsData = [];
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('loginSection').style.display = 'block';
+    document.getElementById('userBar').style.display = 'none';
+    document.getElementById('hakbunInput').value = '';
+    document.getElementById('passwordInput').value = '';
+  }
+}
+
+// ============ 폼 화면 ============
+async function showFormScreen() {
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('userBar').style.display = 'flex';
+  document.getElementById('userInfo').textContent = '학번 ' + currentHakbun;
+  
+  // 공지/마감일 표시
+  let noticeHtml = '';
+  if (CONFIG.NOTICE) noticeHtml += '📢 ' + CONFIG.NOTICE;
+  if (CONFIG.DEADLINE) {
+    const deadline = new Date(CONFIG.DEADLINE);
+    if (!isNaN(deadline.getTime())) {
+      const remaining = Math.ceil((deadline - new Date()) / (1000*60*60*24));
+      if (remaining >= 0) {
+        noticeHtml += '<br>⏰ 마감일: ' + CONFIG.DEADLINE + ' (D-' + remaining + ')';
+      } else {
+        noticeHtml += '<br>⏰ <strong>마감일이 지났습니다.</strong>';
+      }
+    }
+  }
+  document.getElementById('noticeBox').innerHTML = noticeHtml;
+  
+  showLoading('대학 목록 로딩 중...');
+  
+  try {
+    // 대학 목록 + 파일 매핑 로드
+    if (universities.length === 0) {
+      const [univResp, fnResp] = await Promise.all([
+        fetch(CONFIG.DATA_BASE + 'universities.json'),
+        fetch(CONFIG.DATA_BASE + 'univ_filenames.json')
+      ]);
+      universities = await univResp.json();
+      univFilenames = await fnResp.json();
+    }
+    
+    // 저장된 입력 불러오기 (LocalStorage)
+    const saved = localStorage.getItem('input_' + currentHakbun);
+    const savedSlots = saved ? JSON.parse(saved) : [];
+    
+    hideLoading();
+    initializeSlots(savedSlots);
+  } catch (err) {
+    hideLoading();
+    alert('데이터 로딩 실패: ' + err.message + '\n\n페이지를 새로고침해주세요.');
+  }
+}
+
+// ============ 슬롯 초기화 ============
+function initializeSlots(savedSlots) {
+  slotsData = [];
+  for (let i = 0; i < TOTAL_SLOTS; i++) {
+    const slotNum = i + 1;
+    const saved = savedSlots.find(s => s.slot === slotNum);
+    slotsData.push({
+      slot: slotNum,
+      univ: saved ? saved.univ : '',
+      type: saved ? saved.type : '',
+      dept: saved ? saved.dept : ''
+    });
+  }
+  
+  renderSlots();
+  
+  // 저장된 슬롯들의 데이터 미리 로드
+  const univsToLoad = [...new Set(slotsData.filter(s => s.univ).map(s => s.univ))];
+  univsToLoad.forEach(u => {
+    loadUnivData(u).then(() => {
+      // 그 대학을 가진 모든 슬롯 UI 업데이트
+      slotsData.forEach((s, idx) => {
+        if (s.univ === u) {
+          populateTypeSelect(idx);
+          if (s.type) {
+            populateDeptSelect(idx);
+            if (s.dept) {
+              showDetails(idx);
+            }
+          }
+        }
+      });
+    });
+  });
+}
+
+// ============ 대학 데이터 로드 (캐시 활용) ============
+async function loadUnivData(univName) {
+  if (univDataCache[univName]) return univDataCache[univName];
+  
+  const filename = univFilenames[univName];
+  if (!filename) return null;
+  
+  try {
+    const resp = await fetch(CONFIG.DATA_BASE + 'data/' + filename);
+    if (!resp.ok) throw new Error('파일 없음: ' + filename);
+    const data = await resp.json();
+    univDataCache[univName] = data;
+    return data;
+  } catch (err) {
+    console.error('대학 데이터 로드 실패:', univName, err);
+    return null;
+  }
+}
+
+// ============ 슬롯 렌더링 ============
+function renderSlots() {
+  const container = document.getElementById('slotsContainer');
+  let html = '';
+  
+  html += '<h3 class="section-title">필수 지원 (' + CONFIG.REQUIRED_SLOTS + '개)</h3>';
+  for (let i = 0; i < CONFIG.REQUIRED_SLOTS; i++) {
+    html += renderSlot(i, true);
+  }
+  
+  html += '<h3 class="section-title">추가 지원 (선택, 최대 ' + CONFIG.OPTIONAL_SLOTS + '개)</h3>';
+  for (let i = CONFIG.REQUIRED_SLOTS; i < TOTAL_SLOTS; i++) {
+    html += renderSlot(i, false);
+  }
+  
+  container.innerHTML = html;
+  
+  // 대학 드롭다운 채우기
+  for (let i = 0; i < TOTAL_SLOTS; i++) {
+    populateUnivSelect(i);
+  }
+}
+
+function renderSlot(idx, isRequired) {
+  const slot = slotsData[idx];
+  const slotNum = idx + 1;
+  const filled = slot.univ && slot.type && slot.dept;
+  
+  return `
+    <div class="slot ${filled ? 'slot-filled' : ''} ${isRequired ? 'slot-required' : 'slot-optional'}">
+      <div class="slot-header">
+        <span class="slot-num">${slotNum}번 ${isRequired ? '(필수)' : '(선택)'}</span>
+        ${filled ? '<span class="slot-check">✓</span>' : ''}
+      </div>
+      <div class="slot-fields">
+        <div class="field">
+          <label>대학명</label>
+          <select id="univ_${idx}" onchange="onUnivChange(${idx})">
+            <option value="">— 선택 —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>세부전형</label>
+          <select id="type_${idx}" onchange="onTypeChange(${idx})" ${!slot.univ ? 'disabled' : ''}>
+            <option value="">— 선택 —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>모집단위</label>
+          <select id="dept_${idx}" onchange="onDeptChange(${idx})" ${!slot.type ? 'disabled' : ''}>
+            <option value="">— 선택 —</option>
+          </select>
+        </div>
+        <button class="btn-clear" onclick="clearSlot(${idx})">초기화</button>
+      </div>
+      <div id="details_${idx}" class="slot-details"></div>
+    </div>
+  `;
+}
+
+function populateUnivSelect(idx) {
+  const sel = document.getElementById('univ_' + idx);
+  const slot = slotsData[idx];
+  sel.innerHTML = '<option value="">— 선택 —</option>';
+  universities.forEach(u => {
+    const opt = document.createElement('option');
+    opt.value = u;
+    opt.textContent = u;
+    if (u === slot.univ) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function populateTypeSelect(idx) {
+  const slot = slotsData[idx];
+  const sel = document.getElementById('type_' + idx);
+  if (!sel) return;
+  
+  sel.innerHTML = '<option value="">— 선택 —</option>';
+  
+  const univData = univDataCache[slot.univ];
+  if (!univData) return;
+  
+  const types = Object.keys(univData).sort();
+  types.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    opt.textContent = t;
+    if (t === slot.type) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  
+  sel.disabled = false;
+}
+
+function populateDeptSelect(idx) {
+  const slot = slotsData[idx];
+  const sel = document.getElementById('dept_' + idx);
+  if (!sel) return;
+  
+  sel.innerHTML = '<option value="">— 선택 —</option>';
+  
+  const univData = univDataCache[slot.univ];
+  if (!univData || !univData[slot.type]) return;
+  
+  const depts = Object.keys(univData[slot.type]).sort();
+  depts.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d;
+    if (d === slot.dept) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  
+  sel.disabled = false;
+}
+
+// ============ 이벤트 핸들러 ============
+async function onUnivChange(idx) {
+  const sel = document.getElementById('univ_' + idx);
+  slotsData[idx].univ = sel.value;
+  slotsData[idx].type = '';
+  slotsData[idx].dept = '';
+  
+  document.getElementById('type_' + idx).innerHTML = '<option value="">— 선택 —</option>';
+  document.getElementById('type_' + idx).disabled = true;
+  document.getElementById('dept_' + idx).innerHTML = '<option value="">— 선택 —</option>';
+  document.getElementById('dept_' + idx).disabled = true;
+  document.getElementById('details_' + idx).innerHTML = '';
+  
+  if (!sel.value) return;
+  
+  document.getElementById('type_' + idx).innerHTML = '<option value="">로딩 중...</option>';
+  await loadUnivData(sel.value);
+  populateTypeSelect(idx);
+}
+
+function onTypeChange(idx) {
+  const sel = document.getElementById('type_' + idx);
+  slotsData[idx].type = sel.value;
+  slotsData[idx].dept = '';
+  
+  document.getElementById('dept_' + idx).innerHTML = '<option value="">— 선택 —</option>';
+  document.getElementById('dept_' + idx).disabled = !sel.value;
+  document.getElementById('details_' + idx).innerHTML = '';
+  
+  if (sel.value) {
+    populateDeptSelect(idx);
+  }
+}
+
+function onDeptChange(idx) {
+  const sel = document.getElementById('dept_' + idx);
+  slotsData[idx].dept = sel.value;
+  
+  if (sel.value) {
+    showDetails(idx);
+  } else {
+    document.getElementById('details_' + idx).innerHTML = '';
+  }
+}
+
+// ============ 상세 정보 표시 ============
+function showDetails(idx) {
+  const slot = slotsData[idx];
+  const detailsEl = document.getElementById('details_' + idx);
+  
+  const univData = univDataCache[slot.univ];
+  if (!univData || !univData[slot.type] || !univData[slot.type][slot.dept]) {
+    detailsEl.innerHTML = '<div class="info-empty">해당 정보가 없습니다.</div>';
+    return;
+  }
+  
+  const d = univData[slot.type][slot.dept];
+  detailsEl.innerHTML = renderDetails(d);
+  
+  // 슬롯 카드 스타일 업데이트
+  const slotEl = detailsEl.closest('.slot');
+  slotEl.classList.add('slot-filled');
+  const headerEl = slotEl.querySelector('.slot-header');
+  if (!headerEl.querySelector('.slot-check')) {
+    headerEl.innerHTML += '<span class="slot-check">✓</span>';
+  }
+}
+
+function renderDetails(d) {
+  const fmt = (v) => (v === null || v === undefined || v === '') ? '-' : v;
+  
+  return `
+    <div class="details-grid">
+      <div class="detail-section">
+        <h4>📋 기본 정보</h4>
+        <div class="detail-row"><span class="lbl">지역</span><span class="val">${fmt(d['지역'])}</span></div>
+        <div class="detail-row"><span class="lbl">모집단위구분</span><span class="val">${fmt(d['모집단위구분'])}</span></div>
+        <div class="detail-row"><span class="lbl">계열</span><span class="val">${fmt(d['계열'])}</span></div>
+        <div class="detail-row"><span class="lbl">세부모집단위</span><span class="val">${fmt(d['세부 모집단위'])}</span></div>
+      </div>
+      
+      <div class="detail-section detail-highlight">
+        <h4>⚠️ 수능 최저 학력기준</h4>
+        <div class="suneung-min">${fmt(d['수능최저기준'])}</div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>👥 모집 인원</h4>
+        <div class="detail-row"><span class="lbl">2026</span><span class="val">${fmt(d['2026모집인원'])}명</span></div>
+        <div class="detail-row"><span class="lbl">2025</span><span class="val">${fmt(d['2025모집인원'])}명</span></div>
+        <div class="detail-row"><span class="lbl">2024</span><span class="val">${fmt(d['2024모집인원'])}명</span></div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>📊 경쟁률</h4>
+        <div class="detail-row"><span class="lbl">2025</span><span class="val">${fmt(d['2025경쟁률'])} : 1</span></div>
+        <div class="detail-row"><span class="lbl">2024</span><span class="val">${fmt(d['2024경쟁률'])} : 1</span></div>
+        <div class="detail-row"><span class="lbl">2023</span><span class="val">${fmt(d['2023경쟁률'])} : 1</span></div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>📈 입결</h4>
+        <div class="detail-row"><span class="lbl">2025 (${fmt(d['2025입결1기준'])})</span><span class="val">${fmt(d['2025입결1'])}</span></div>
+        <div class="detail-row"><span class="lbl">2024 (${fmt(d['2024입결1기준'])})</span><span class="val">${fmt(d['2024입결1'])}</span></div>
+        <div class="detail-row"><span class="lbl">2023 (${fmt(d['2023입결기준1'])})</span><span class="val">${fmt(d['2023입결1'])}</span></div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>📝 전형 방법</h4>
+        <div class="detail-row"><span class="lbl">1단계 (${fmt(d['1단계선발비율'])}%)</span><span class="val">${fmt(d['1단계전형방법'])}</span></div>
+        <div class="detail-row"><span class="lbl">2단계 (${fmt(d['2단계선발비율'])}%)</span><span class="val">${fmt(d['2단계전형방법'])}</span></div>
+        <div class="detail-row"><span class="lbl">최종단계</span><span class="val">${fmt(d['최종전형단계'])}</span></div>
+      </div>
+      
+      <div class="detail-section detail-highlight">
+        <h4>📅 일정</h4>
+        <div class="detail-row"><span class="lbl">대학별고사</span><span class="val">${fmt(d['대학고사'])} (${fmt(d['대학별고사시기'])})</span></div>
+        <div class="detail-row"><span class="lbl">1단계 발표</span><span class="val">${fmt(d['1단계합격자발표'])}</span></div>
+        <div class="detail-row"><span class="lbl">논술 일정</span><span class="val">${fmt(d['논술일정'])}</span></div>
+        <div class="detail-row"><span class="lbl">면접 일정</span><span class="val">${fmt(d['면접일정'])}</span></div>
+        <div class="detail-row"><span class="lbl">최종 발표</span><span class="val">${fmt(d['합격자발표일'])}</span></div>
+      </div>
+      
+      <div class="detail-section">
+        <h4>📚 학생부 반영</h4>
+        <div class="detail-row"><span class="lbl">반영 학년</span><span class="val">${reflectGrade(d)}</span></div>
+        <div class="detail-row"><span class="lbl">교과/출결/봉사</span><span class="val">${fmt(d['교과'])}/${fmt(d['출결'])}/${fmt(d['봉사'])}</span></div>
+        <div class="detail-row"><span class="lbl">공통/일반선택</span><span class="val">${fmt(d['공통과목/일반선택과목'])}</span></div>
+        <div class="detail-row"><span class="lbl">진로선택</span><span class="val">${fmt(d['진로선택과목'])}</span></div>
+      </div>
+    </div>
+  `;
+}
+
+function reflectGrade(d) {
+  const grades = [];
+  if (d['1학년']) grades.push('1');
+  if (d['2학년']) grades.push('2');
+  if (d['3학년']) grades.push('3');
+  if (d['1,2학년']) grades.push('1·2');
+  if (d['2,3학년']) grades.push('2·3');
+  if (d['전체']) grades.push('전체');
+  return grades.length ? grades.join(', ') + '학년' : '-';
+}
+
+// ============ 슬롯 초기화 ============
+function clearSlot(idx) {
+  if (!confirm((idx+1) + '번 지원을 초기화하시겠습니까?')) return;
+  
+  slotsData[idx] = { slot: idx+1, univ: '', type: '', dept: '' };
+  document.getElementById('univ_' + idx).value = '';
+  document.getElementById('type_' + idx).innerHTML = '<option value="">— 선택 —</option>';
+  document.getElementById('type_' + idx).disabled = true;
+  document.getElementById('dept_' + idx).innerHTML = '<option value="">— 선택 —</option>';
+  document.getElementById('dept_' + idx).disabled = true;
+  document.getElementById('details_' + idx).innerHTML = '';
+  
+  const slotEl = document.getElementById('univ_' + idx).closest('.slot');
+  slotEl.classList.remove('slot-filled');
+  const check = slotEl.querySelector('.slot-check');
+  if (check) check.remove();
+}
+
+// ============ 저장 ============
+async function saveData(isFinalSubmit) {
+  if (!currentHakbun) return;
+  
+  // 마감일 체크
+  if (CONFIG.DEADLINE) {
+    const deadline = new Date(CONFIG.DEADLINE);
+    if (!isNaN(deadline.getTime()) && new Date() > deadline) {
+      showMsg('saveMsg', '⏰ 제출 마감일이 지났습니다.', true);
+      return;
+    }
+  }
+  
+  const filled = slotsData.filter(s => s.univ && s.type && s.dept);
+  const requiredCount = slotsData.slice(0, CONFIG.REQUIRED_SLOTS).filter(s => s.univ && s.type && s.dept).length;
+  
+  if (isFinalSubmit) {
+    if (requiredCount < CONFIG.REQUIRED_SLOTS) {
+      alert('❗ 필수 ' + CONFIG.REQUIRED_SLOTS + '개를 모두 입력해야 최종 제출 가능합니다.\n현재 ' + requiredCount + '개');
+      return;
+    }
+    if (!confirm('최종 제출하시겠습니까?\n총 ' + filled.length + '개 슬롯이 저장됩니다.\n(마감일까지 수정 가능합니다.)')) return;
+  }
+  
+  // LocalStorage에 항상 저장 (브라우저에)
+  localStorage.setItem('input_' + currentHakbun, JSON.stringify(slotsData));
+  
+  if (!isFinalSubmit) {
+    // 임시저장은 LocalStorage만
+    showMsg('saveMsg', '✅ 임시저장됨 (브라우저에 저장)', false);
+    return;
+  }
+  
+  // 최종제출: Apps Script로 전송
+  showLoading('제출 중...');
+  
+  const payload = {
+    hakbun: currentHakbun,
+    slots: filled.map(s => ({ slot: s.slot, univ: s.univ, type: s.type, dept: s.dept })),
+    timestamp: new Date().toISOString()
+  };
+  
+  try {
+    // Apps Script는 CORS 제한 때문에 no-cors 모드로 보냄
+    // 응답을 못 받지만 데이터는 전달됨
+    await fetch(CONFIG.SUBMIT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    
+    hideLoading();
+    showMsg('saveMsg', '✅ 최종 제출 완료! (마감일까지 수정 가능)', false);
+  } catch (err) {
+    hideLoading();
+    showMsg('saveMsg', '⚠️ 제출 중 오류. 다시 시도해주세요: ' + err.message, true);
+  }
+}
+
+// Enter 키 로그인
+document.addEventListener('DOMContentLoaded', () => {
+  ['hakbunInput', 'passwordInput'].forEach(id => {
+    document.getElementById(id).addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') login(false);
+    });
+  });
+});
+</script>
+</body>
+</html>
